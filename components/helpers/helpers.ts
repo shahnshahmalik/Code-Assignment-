@@ -1,8 +1,9 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   items: Array<string>;
   address: string;
+  pincode: string;
 }
 
 export interface UserMatch {
@@ -10,49 +11,84 @@ export interface UserMatch {
   matchKey: Array<string>;
 }
 
-export const scrollItemIntoView = (elementRef: any) => {
-  const rect = elementRef.current?.getBoundingClientRect();
-  const isInView =
-    rect?.top >= 0 &&
-    rect?.left >= 0 &&
-    rect?.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    rect?.right <= (window.innerWidth || document.documentElement.clientWidth);
-
+export const scrollItemIntoView = (
+  elementRef: any,
+  containerElementRef: any
+) => {
+  const card = elementRef.current?.getBoundingClientRect();
+  const container = containerElementRef.current;
+  const isInView = card?.top >= 0 && card?.bottom <= container?.clientHeight;
   if (!isInView) {
-    elementRef.current?.scrollIntoView();
+    elementRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest',
+    });
   }
 };
 
 export const UsersList: Array<User> = [
   {
-    id: 1,
-    name: 'Shahnshah',
-    items: ['iPhone', 'Laptop'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala 110021`,
+    id: '123-s2-546',
+    name: 'John Jacobs',
+    items: ['bucket', 'bottle'],
+    address: '1st Cross, 9th Main, abc Apartment',
+    pincode: '5xx012',
   },
   {
-    id: 2,
-    name: 'Test user',
-    items: ['Banana', 'Apple'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala 110033`,
+    id: '123-s3-146',
+    name: 'David Mire',
+    items: ['Bedroom Set'],
+    address: '2nd Cross, BTI Apartment',
+    pincode: '4xx012',
   },
   {
-    id: 3,
-    name: 'Xyz User',
-    items: ['Item 1', 'XVFSD'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala 110011`,
+    id: '223-a1-234',
+    name: 'Soloman Marshall',
+    items: ['bottle'],
+    address: 'Riverbed Apartment',
+    pincode: '4xx032',
   },
   {
-    id: 4,
-    name: 'Dummy 123',
-    items: ['book', 'test'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala 110077`,
+    id: '121-s2-111',
+    name: 'Ricky Beno',
+    items: ['Mobile Set'],
+    address: 'Sunshine City',
+    pincode: '5xx072',
   },
   {
-    id: 5,
-    name: '__dummy',
-    items: ['ABCD', 'EFGH'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala 827009`,
+    id: '123-p2-246',
+    name: 'Sikander Singh',
+    items: ['Air Conditioner'],
+    address: 'Riverbed Apartment',
+    pincode: '4xx032',
+  },
+  {
+    id: 'b23-s2-321',
+    name: 'Ross Wheeler',
+    items: ['Mobile'],
+    address: '1st Cross, 9th Main, abc Apartement',
+    pincode: '5xx012',
+  },
+  {
+    id: '113-n2-563',
+    name: 'Ben Bish',
+    items: ['Kitchen Set', 'Chair'],
+    address: 'Sunshine City',
+    pincode: '5xx072',
+  },
+  {
+    id: '323-s2-112',
+    name: 'John Michael',
+    items: ['Refrigerator'],
+    address: '1st Cross, 9th Main, abc Apartement',
+    pincode: '5xx012',
+  },
+  {
+    id: 'abc-34-122',
+    name: 'Jason Jordan',
+    items: ['Mobile'],
+    address: 'Riverbed Apartment',
+    pincode: '4xx032',
   },
 ];

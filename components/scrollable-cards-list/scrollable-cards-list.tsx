@@ -12,9 +12,10 @@ import {
 
 export default function ScrollableCardsList() {
   const [searchText, setSearchText] = React.useState('');
-  const [activeItem, setActiveItem] = React.useState(0);
+  const [activeItem, setActiveItem] = React.useState('');
   const [filteredUsers, setFilteredUsers] = React.useState([]);
   const activeCardRef: React.RefObject<HTMLDivElement> = React.createRef();
+  const containerRef: React.RefObject<HTMLDivElement> = React.createRef();
 
   /**
    * Get the list of users filtered by the search text
@@ -63,27 +64,30 @@ export default function ScrollableCardsList() {
   };
 
   const handleKeyEvents = (e) => {
-    const nextItemId = activeItem + 1;
-    const prevItemId = activeItem - 1;
+    const activeUserIndex = filteredUsers.findIndex(
+      (user) => user.id === activeItem
+    );
+    const nextItemId = filteredUsers[activeUserIndex + 1]?.id;
+    const prevItemId = filteredUsers[activeUserIndex - 1]?.id;
 
-    if (e.keyCode === 40 && nextItemId <= filteredUsers?.length) {
+    if (e.keyCode === 40 && nextItemId) {
       setActiveItem(nextItemId);
     }
 
-    if (e.keyCode === 38 && prevItemId >= 0) {
+    if (e.keyCode === 38 && prevItemId) {
       setActiveItem(prevItemId);
     }
   };
 
   React.useEffect(() => {
-    scrollItemIntoView(activeCardRef);
+    scrollItemIntoView(activeCardRef, containerRef);
   });
 
   return (
     <div className="search-container-wrapper">
       <Search onTextChange={handleTextChnage} onKeyPressed={handleKeyEvents} />
       {!!searchText && (
-        <div className="scrollable-area">
+        <div className="scrollable-area" ref={containerRef}>
           {filteredUsers?.length ? (
             filteredUsers.map((user: User) => {
               return (

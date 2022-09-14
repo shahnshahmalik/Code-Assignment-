@@ -19,6 +19,10 @@
   background-color: #fffedc;
 }
 
+.card:last-child {
+  border-bottom: none;
+}
+
 .null-state {
   display: flex;
   justify-content: center;
