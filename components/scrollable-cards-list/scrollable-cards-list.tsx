@@ -3,44 +3,35 @@ import Search from '../search/search';
 import Card from '../card/card';
 import NullState from '../nullstate/nullstate';
 import '../../style.css';
-
-export interface User {
-  id: number;
-  name: string;
-  items: Array<string>;
-  address: string;
-  pinCode: string;
-}
-
-export interface UserMatch {
-  isMatching: boolean;
-  matchKey: Array<string>;
-}
+import {
+  scrollItemIntoView,
+  User,
+  UserMatch,
+  UsersList,
+} from '../helpers/helpers';
 
 export default function ScrollableCardsList() {
   const [searchText, setSearchText] = React.useState('');
+  const [activeItem, setActiveItem] = React.useState(0);
+  const [filteredUsers, setFilteredUsers] = React.useState([]);
+  const activeCardRef: React.RefObject<HTMLDivElement> = React.createRef();
 
   /**
    * Get the list of users filtered by the search text
    */
-  const filteredUsers = (searchText) => {
-    return UsersList.map((user: User) => {
-      return (
-        isMatchingUser(user, searchText)?.isMatching && (
-          <Card
-            searchTerm={searchText}
-            userDetail={user}
-            matchingKeys={isMatchingUser(user, searchText)?.matchKey}
-          />
-        )
-      );
-    });
+  const filterUsers = (searchText: string) => {
+    const filteredUser = UsersList.filter(
+      (user) => isMatchingUser(user, searchText)?.isMatching
+    );
+
+    return filteredUser;
   };
 
   /**
    * Setting search text here
    */
   const handleTextChnage = (event) => {
+    setFilteredUsers(filterUsers(event));
     setSearchText(event);
   };
 
@@ -54,6 +45,7 @@ export default function ScrollableCardsList() {
       isMatching: false,
       matchKey: [],
     };
+
     Object.keys(user).forEach((key) => {
       if (typeof user[key] === 'object') {
         if (
@@ -70,51 +62,45 @@ export default function ScrollableCardsList() {
     return match;
   };
 
+  const handleKeyEvents = (e) => {
+    const nextItemId = activeItem + 1;
+    const prevItemId = activeItem - 1;
+
+    if (e.keyCode === 40 && nextItemId <= filteredUsers?.length) {
+      setActiveItem(nextItemId);
+    }
+
+    if (e.keyCode === 38 && prevItemId >= 0) {
+      setActiveItem(prevItemId);
+    }
+  };
+
+  React.useEffect(() => {
+    scrollItemIntoView(activeCardRef);
+  });
+
   return (
     <div className="search-container-wrapper">
-      <Search onTextChange={handleTextChnage} />
-      <div className="scrollable-area">
-        {filteredUsers(searchText)?.length && filteredUsers(searchText)}
-        {!filteredUsers(searchText)?.length && <NullState />}
-      </div>
+      <Search onTextChange={handleTextChnage} onKeyPressed={handleKeyEvents} />
+      {!!searchText && (
+        <div className="scrollable-area">
+          {filteredUsers?.length ? (
+            filteredUsers.map((user: User) => {
+              return (
+                <Card
+                  cardRef={activeCardRef}
+                  currentId={activeItem}
+                  searchTerm={searchText}
+                  userDetail={user}
+                  matchingKeys={isMatchingUser(user, searchText)?.matchKey}
+                />
+              );
+            })
+          ) : (
+            <NullState />
+          )}
+        </div>
+      )}
     </div>
   );
 }
-
-export const UsersList: Array<User> = [
-  {
-    id: 1,
-    name: 'Shahnshah',
-    items: ['iPhone', 'Laptop'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala`,
-    pinCode: `112345`,
-  },
-  {
-    id: 2,
-    name: 'Test user',
-    items: ['Banana', 'Apple'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala`,
-    pinCode: `112345`,
-  },
-  {
-    id: 3,
-    name: 'Xyz User',
-    items: ['Item 1', 'XVFSD'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala`,
-    pinCode: `112345`,
-  },
-  {
-    id: 4,
-    name: 'Dummy 123',
-    items: ['book', 'test'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala`,
-    pinCode: `112345`,
-  },
-  {
-    id: 5,
-    name: '__dummy',
-    items: ['ABCD', 'EFGH'],
-    address: `J-1, 2nd Floor Right Side, Khirki Extension, phase 4, Malviya Nagar, Kormanthala`,
-    pinCode: `112345`,
-  },
-];
